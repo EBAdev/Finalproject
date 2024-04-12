@@ -11,14 +11,45 @@ Mat = Type["Matrix"]
 
 class LinAlg:
     def col_space(self):
+        """
+        Method to return the column space of a LinAlg class
+        """
         if isinstance(self.elements[0], (int, float)):
             return 1
         return len(self.elements[0])
 
     def row_space(self):
+        """
+        Method to return the row space of a LinAlg class
+        """
         if isinstance(self.elements[0], (int, float)):
             return 1
         return len([row for row in self.elements])
+
+    def __iter__(self):
+        """
+        Method to run when a iterator is called on a LinAlg class
+        """
+        self.idx = 0
+        return self
+
+    def __next__(self):
+        """
+        Method to return the next element in a LinAlg class
+        """
+        if self.idx+1 <= len(self.elements):
+            x = self.elements[self.idx]
+            self.idx += 1
+            return x
+        else:
+            raise StopIteration
+
+    def __getitem__(self, i: int):
+        """
+        Method to return a element at index of vector
+        """
+        return self.elements[i]
+
 
 
 class Vector(LinAlg):
@@ -97,6 +128,17 @@ class Vector(LinAlg):
     def __str__(self) -> str:
         return f"Vector: <{self.elements}>"
 
+    def pow(self, n: int) -> str:
+        """
+        Define powers of vectors as the elementwise power.
+        """
+        assert isinstance(
+            n, int), "elementwise power of vectors is only defined for factors"
+        return Vector([x**n for x in self.elements])
+
+    def __pow__(self, n: int):
+        return self.pow(n)
+
 
 class Matrix(LinAlg):
     def __init__(self, elements) -> None:
@@ -146,7 +188,8 @@ class Matrix(LinAlg):
     def mat_mult(self, matrix: Mat) -> Mat:
         assert isinstance(
             matrix, Matrix), "matrix multiplication is only defined between matricies"
-        assert self.col_space() == matrix.row_space(), "columnspace and rowspace of the matricies do not match."
+        assert self.col_space() == matrix.row_space(
+        ), "columnspace and rowspace of the matricies do not match."
         return Matrix([[sum(a * b for a, b in zip(row, col)) for col in zip(*matrix.elements)] for row in self.elements])
 
     def __mul__(self, other: Mat | int | float) -> Mat | int | float:
@@ -171,8 +214,8 @@ class Matrix(LinAlg):
 if __name__ == "__main__":
     v1 = Vector([1, 2, 3])
     v2 = Vector([1, 2, 3])
-    print(v1 + v2, v1*2, v1-v2, v1*v2)
+    print(v1 + v2, v1*2, v1-v2, v1*v2, v1**2)
 
     m1 = Matrix([[1, 2, 3], [1, 2, 3], [1, 2, 3]])
     m2 = Matrix([[1], [2], [3]])
-    print(m2*m1)
+    print(m1*m2)
