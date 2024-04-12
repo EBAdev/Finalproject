@@ -45,16 +45,28 @@ def read_images(filename: str) -> list[img]:
         return [[[byte for byte in f.read(num_row)] for col in range(num_col)] for img in range(num_img)]
 
 
+def plot_images(images: list[img], labels: list[int], rows: int = 2, cols: int = 5):
+    """
+    Plot the first images in a list of images, along with the corresponding labels.
 
-def plot_images(images: list[img], labels: list[int], rows=2, cols=5):
+    Args:
+    1. images (list[img]): A list of the images.
+    2. labels (list[int]): A list of the image labels.
+    3.  rows [optional] (int): The amount of image rows to plot.
+    4. cols [optional] (int): The amount of image cols to plot.
+
+    Returns:
+    * Opens a matplotlib plot of the first rows x cols images.
+    """
     fig, axes = plt.subplots(rows, cols, figsize=(cols, rows))
     fig.subplots_adjust(hspace=0.5, wspace=0.4)
-    i = 0
     for ax, image, label in zip(axes.flat, images, labels):
         ax.imshow(image, cmap='gray_r', vmin=0, vmax=255)
-        ax.tick_params(left=False, right=False, labelleft=False, labelbottom=False, bottom=False)
+        ax.tick_params(left=False, right=False, labelleft=False,
+                       labelbottom=False, bottom=False)
         ax.set_title(label)
     plt.show()
+    return None
 
 
 if __name__ == "__main__":
