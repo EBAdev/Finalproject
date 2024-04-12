@@ -1,6 +1,4 @@
-"""
-Write functions linear_load(file_name) and linear_save(file_name, network) to load and save a linear classifier network = (A, b) using JSON. Test your functions on mnist_linear.weights.
-"""
+
 import json
 
 NetW = list[list[int | float], list[int, float]]
