@@ -4,8 +4,6 @@ Homemade linear algebra module to use for MNIST
 
 from typing import Type
 
-
-Vec = Type["Vector"]
 Mat = Type["Matrix"]
 
 
@@ -51,95 +49,6 @@ class LinAlg:
         return self.elements[i]
 
 
-
-class Vector(LinAlg):
-    def __init__(self, elements: list[int]) -> None:
-        """
-        Initiate a linear algebra (row)vector.
-
-        Args:
-        1. elements (list[int]): A 1-dimensional list of the elements in the vector.
-        """
-        # Check input
-        assert isinstance(elements, list), "elements must be a list"
-        assert all(isinstance(item, (int, float))
-                   for item in elements), "lists must contain only integers or floats"
-        self.elements = elements
-
-    def add(self, vector: Vec) -> Vec:
-        """
-        Define addition between vectors as the elementwise addition of vectors
-        """
-        assert isinstance(
-            vector, Vector), "Vector addition is only defined between two vectors"
-        assert self.col_space() == vector.col_space(
-        ), "The column space of the two vectors do not match"
-
-        return Vector([x+y for (x, y) in zip(self.elements, vector.elements)])
-
-    def __add__(self, vector: Vec) -> Vec:
-        return self.add(vector)
-
-    def sub(self, vector: Vec) -> Vec:
-        """
-        Define subtraction between vectors as the elementwise invese addition of vectors
-        """
-        return self.add(-1*vector)
-
-    def __sub__(self, vector: Vec) -> Vec:
-        return self.sub(vector)
-
-    def mult(self, factor: int | float) -> Vec:
-        """
-        Define multiplication between vectors and scalars as the elementwise scalation
-        """
-        assert isinstance(
-            factor, (int, float)), "factor multiplication of vectors is only defined with integers and floats"
-        return Vector([factor * x for x in self.elements])
-
-    def dot(self, vector: Vec) -> int | float:
-        """
-        Define the dotproduct between two vectors as the classic inner product
-        """
-        assert isinstance(
-            vector, Vector), "Vector addition is only defined between two vectors"
-        assert self.col_space() == vector.col_space(
-        ), "The column space of the two vectors do not match"
-        return sum([x*y for (x, y) in zip(self.elements, vector.elements)])
-
-    def __mul__(self, other: Vec | int | float) -> Vec | int | float:
-        """
-        Define multiplication operator to use dot-product for vectors and scalar multiplication for factors.
-        """
-        assert isinstance(
-            other, (Vector, int, float)), "Vector multiplication is only defined with scalars and other vectors"
-        if isinstance(other, Vector):
-            return self.dot(other)
-        return self.mult(other)
-
-    def __rmul__(self, factor: int | float) -> Vec:
-        """
-        Define scalarmultiplication for rhs
-        """
-        assert isinstance(
-            factor, (int, float)), "Vector multiplication is only defined with scalars and other vectors"
-        return self.mult(factor)
-
-    def __str__(self) -> str:
-        return f"Vector: <{self.elements}>"
-
-    def pow(self, n: int) -> str:
-        """
-        Define powers of vectors as the elementwise power.
-        """
-        assert isinstance(
-            n, int), "elementwise power of vectors is only defined for factors"
-        return Vector([x**n for x in self.elements])
-
-    def __pow__(self, n: int):
-        return self.pow(n)
-
-
 class Matrix(LinAlg):
     def __init__(self, elements) -> None:
         """
@@ -153,13 +62,20 @@ class Matrix(LinAlg):
                    for sublist in elements for item in sublist), "sublist must contain only integers or floats"
 
         self.elements = elements
+        self.row_vector = False
+
+        if self.row_space() == 1:
+            self.row_vector = True
+
+        return None
 
     def add(self, matrix: Mat) -> Mat:
         assert isinstance(
             matrix, Matrix), "Addition is only defined between two matricies."
         assert self.row_space() == matrix.row_space() and self.col_space() == matrix.col_space(
         ), "addition is only defined between matricies with the same row and column dimension."
-        return Matrix([[x+y for (x, y) in zip(row_self, row_other)] for row_self, row_other in zip(self.elements, matrix.elements)])
+        return Matrix([[x+y for (x, y) in zip(row_self, row_other)] for row_self,
+                       row_other in zip(self.elements, matrix.elements)])
 
     def __add__(self, matrix: Mat) -> Mat:
         return self.add(matrix)
@@ -177,13 +93,11 @@ class Matrix(LinAlg):
         return self.sub(matrix)
 
     def fact_mult(self, factor: int | float) -> Mat:
-        assert isinstance(
-            factor, (int, float)), "factor multiplication of matricies is only defined with integers or floats."
+        assert isinstance(factor, (int, float)), "factor multiplication of matricies is only defined with integers or floats."
         return Matrix([[factor*x for x in row] for row in self.elements])
 
     def transpose(self):
-        return Matrix([[row[i] for row in self.elements]
-                      for i in range(self.row_space())])
+        return Matrix([[row[i] for row in self.elements] for i in range(len(self.elements[0]))])
 
     def mat_mult(self, matrix: Mat) -> Mat:
         assert isinstance(
@@ -202,7 +116,7 @@ class Matrix(LinAlg):
             return self.mat_mult(other)
         return self.fact_mult(other)
 
-    def __rmul__(self, factor: int | float) -> Vec:
+    def __rmul__(self, factor: int | float) -> Mat:
         """
         Define scalarmultiplication for rhs
         """
@@ -210,12 +124,28 @@ class Matrix(LinAlg):
             factor, (int, float)), "Matrix multiplication is only defined with scalars and other matricies"
         return self.fact_mult(factor)
 
+    def pow(self, n: int) -> str:
+        """
+        Define powers of vectors as the elementwise power.
+        """
+        assert isinstance(n, int), "elementwise power of matricies is only defined for factors"
+        return Matrix([[x**n for x in row] for row in self.elements])
+
+    def __pow__(self, n: int):
+        return self.pow(n)
+
+    def flatten(self) -> Mat:
+        return Matrix([[val for row in self.elements for val in row]])
+
+    def reshape(self, cols: int) -> Mat:
+        values = self.flatten()[0]
+        return Matrix([values[i:i+cols] for i in range(0, len(values), cols)])
+
 
 if __name__ == "__main__":
-    v1 = Vector([1, 2, 3])
-    v2 = Vector([1, 2, 3])
-    print(v1 + v2, v1*2, v1-v2, v1*v2, v1**2)
-
     m1 = Matrix([[1, 2, 3], [1, 2, 3], [1, 2, 3]])
-    m2 = Matrix([[1], [2], [3]])
-    print(m1*m2)
+    m3 = Matrix([[1, 2, 3], [1, 2, 3], [1, 2, 3]])
+    m2 = Matrix([[1], [2], [3], [4]])
+
+    # print(m1*m2, m1.transpose(), m2.transpose())
+    print(m2.reshape(2), m2.flatten())

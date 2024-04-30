@@ -1,6 +1,8 @@
 import gzip
 import matplotlib.pyplot as plt
 
+from linalg import Matrix
+
 img = list[list[int]]  # 2d object of integer values
 
 
@@ -45,31 +47,59 @@ def read_images(filename: str) -> list[img]:
         return [[[byte for byte in f.read(num_row)] for col in range(num_col)] for img in range(num_img)]
 
 
-def plot_images(images: list[img], labels: list[int], rows: int = 2, cols: int = 5):
+def plot_images(images: list[img], labels: list[int],  Weight_matrix: Matrix, prediction: list[int] = None,):
     """
     Plot the first images in a list of images, along with the corresponding labels.
 
     Args:
     1. images (list[img]): A list of the images.
     2. labels (list[int]): A list of the image labels.
-    3.  rows [optional] (int): The amount of image rows to plot.
+    3. rows [optional] (int): The amount of image rows to plot.
     4. cols [optional] (int): The amount of image cols to plot.
+    5. prediction[optional] (list[int]): A list of predicted labels for the images.
 
     Returns:
     * Opens a matplotlib plot of the first rows x cols images.
     """
-    fig, axes = plt.subplots(rows, cols, figsize=(cols, rows))
-    fig.subplots_adjust(hspace=0.5, wspace=0.4)
-    for ax, image, label in zip(axes.flat, images, labels):
-        ax.imshow(image, cmap='gray_r', vmin=0, vmax=255)
+
+    fig, axes = plt.subplots(4, 5, figsize=(5, 4))
+
+    A_T = Weight_matrix.transpose()
+    weight_images = [Matrix([col]).reshape(28) for col in A_T]
+
+    for idx, ax in enumerate(axes.flat):
         ax.tick_params(left=False, right=False, labelleft=False,
                        labelbottom=False, bottom=False)
-        ax.set_title(label)
+        if idx+1 <= 10:
+            # if there is a prediction for image
+            color = "gray_r"
+            try:
+                prediction[idx]
+            except IndexError and TypeError:
+                label = str(labels[idx])
+            else:
+                if prediction[idx] == labels[idx]:
+                    label = f"Correct: {labels[idx]}."
+                else:
+                    label = f"Failed: {
+                        prediction[idx]},\n Correct: {labels[idx]}."
+                    color = "Reds"
+
+            ax.imshow(images[idx], cmap=color, vmin=0, vmax=255)
+            ax.set_title(label, fontsize=10)
+        else:
+            ax.imshow(weight_images[idx-10].elements,
+                      cmap="plasma_r", vmin=-1, vmax=1)
+            ax.set_title(idx-10, fontsize=10)
+
+    plt.tight_layout()
     plt.show()
+
     return None
 
 
 if __name__ == "__main__":
     labels = read_labels("t10k-labels-idx1-ubyte.gz")
     images = read_images("t10k-images-idx3-ubyte.gz")
-    plot_images(images, labels)
+    for row in images[0]:
+        print(row)
