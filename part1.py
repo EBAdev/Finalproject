@@ -66,7 +66,7 @@ def plot_images(images: list[img], labels: list[int],  Weight_matrix: Matrix, pr
     fig, axes = plt.subplots(4, 5, figsize=(5, 4))
 
     A_T = Weight_matrix.transpose()
-    weight_images = [Matrix([col]).reshape(28) for col in A_T]
+    weight_images = [Matrix([row]).reshape(28) for row in A_T]
 
     for idx, ax in enumerate(axes.flat):
         ax.tick_params(left=False, right=False, labelleft=False,
@@ -90,7 +90,7 @@ def plot_images(images: list[img], labels: list[int],  Weight_matrix: Matrix, pr
             ax.set_title(label, fontsize=10)
         else:
             ax.imshow(weight_images[idx-10].elements,
-                      cmap="plasma_r", vmin=-1, vmax=1)
+                      cmap="hot", vmin=-1, vmax=1)
             ax.set_title(idx-10, fontsize=10)
 
     plt.tight_layout()

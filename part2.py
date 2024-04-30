@@ -82,5 +82,5 @@ if __name__ == "__main__":
     # print(argmax(Matrix([[6, 2, 7, 10, 5]])))
     # print(predict(nw, images[0]))
     # print(evaluate(nw, images, labels))
-    # predicions = evaluate(nw, images, labels)[0]
-    plot_images(images, labels, Matrix(nw[0]))
+    predicions = evaluate(nw, images, labels)[0]
+    plot_images(images, labels, Matrix(nw[0]), predicions)
