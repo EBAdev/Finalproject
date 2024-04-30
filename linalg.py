@@ -1,5 +1,6 @@
 """
-Homemade linear algebra module to use for MNIST
+Homemade linear algebra module to use for MNIST.
+Contains a simple Matrix class and basic operations
 """
 
 from typing import Type
