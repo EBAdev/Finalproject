@@ -5,6 +5,7 @@ from linalg import Matrix
 
 img = list[list[int]]  # 2d object of integer values
 
+#relevant comment
 
 def read_labels(filename: str) -> list[int]:
     """
