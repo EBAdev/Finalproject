@@ -82,18 +82,20 @@ def plot_images(images: list[img], labels: list[int],  Weight_matrix: Matrix, pr
                 if prediction[idx] == labels[idx]:
                     label = f"Correct: {labels[idx]}."
                 else:
-                    label = f"Failed: {
-                        prediction[idx]},\n Correct: {labels[idx]}."
+                    label = f"Failed: {prediction[idx]},\n Correct: {labels[idx]}."
                     color = "Reds"
 
             ax.imshow(images[idx], cmap=color, vmin=0, vmax=255)
             ax.set_title(label, fontsize=10)
         else:
-            ax.imshow(weight_images[idx-10].elements,
+            normdata = ax.imshow(weight_images[idx-10].elements,
                       cmap="hot", vmin=-1, vmax=1)
             ax.set_title(idx-10, fontsize=10)
 
-    plt.tight_layout()
+   ###få lige det her til at fungere
+    fig.colorbar(normdata, ax=axes.ravel().tolist(), shrink=0.8)
+    plt.subplots_adjust(left=0.1, right=0.9, top=0.9, bottom=0.1, wspace=0.4, hspace=1)
+    #plt.tight_layout()
     plt.show()
 
     return None

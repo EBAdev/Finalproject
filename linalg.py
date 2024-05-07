@@ -87,7 +87,7 @@ class Matrix(LinAlg):
         """
         Define subtraction between matricies as the elementwise invese addition
         """
-        return self.add(-1*matrix)
+        return self.add(-1 * matrix)
 
     def __sub__(self, matrix: Mat) -> Mat:
         return self.sub(matrix)
@@ -124,21 +124,34 @@ class Matrix(LinAlg):
             factor, (int, float)), "Matrix multiplication is only defined with scalars and other matricies"
         return self.fact_mult(factor)
 
-    def pow(self, n: int) -> str:
+    def pow(self, n: int, elementwise: bool = True) -> str:
         """
         Define powers of vectors as the elementwise power.
         """
         assert isinstance(n, int), "elementwise power of matricies is only defined for factors"
-        return Matrix([[x**n for x in row] for row in self.elements])
+        if elementwise:
+            return Matrix([[x**n for x in row] for row in self.elements])
+        else:
+            mat = 1
+            for _ in range(n):
+                mat *= Matrix(self.elements)
+            return mat
 
     def __pow__(self, n: int):
+        """
+        Will only work for elementwise power
+        """
         return self.pow(n)
 
     def flatten(self) -> Mat:
+        """
+        Flattens the matrix into a vector
+        """
         return Matrix([[val for row in self.elements for val in row]])
 
     def reshape(self, cols: int) -> Mat:
         values = self.flatten()[0]
+        assert (len(values) ** 0.5).is_integer(), "size of matrix must satsify len((sqrt(matrix))) is an integer"
         return Matrix([values[i:i+cols] for i in range(0, len(values), cols)])
 
 
@@ -148,4 +161,4 @@ if __name__ == "__main__":
     m2 = Matrix([[1], [2], [3], [4]])
 
     # print(m1*m2, m1.transpose(), m2.transpose())
-    print(m2.reshape(2), m2.flatten())
+    print(m2.reshape(2), m2.flatten(), m3.pow(2,elementwise=False))
