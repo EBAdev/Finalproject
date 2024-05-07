@@ -55,17 +55,32 @@ class Matrix(LinAlg):
         initiate a 2d-matrix class
         """
         # Input check for matrix
+        
+        #check for matrix and vector
         assert isinstance(elements, list), "elements must be a list"
-        assert all(isinstance(sublist, list) for sublist in elements) and all(len(sublist) == len(
-            elements[0]) for sublist in elements), "elements must be a list of lists with same length"
-        assert all(isinstance(item, (int, float))
-                   for sublist in elements for item in sublist), "sublist must contain only integers or floats"
 
-        self.elements = elements
-        self.row_vector = False
+        if all(isinstance(item, (int, float)) for item in elements):
+            #check for vectors
+            #assert all(isinstance(item, (int, float))
+            #        for item in elements), "vectors must contain only integers or floats"
 
-        if self.row_space() == 1:
+            self.elements = [elements]
             self.row_vector = True
+        else:
+            #check for matrix
+            assert all(isinstance(sublist, list) for sublist in elements) and all(len(sublist) == len(
+                elements[0]) for sublist in elements), "elements must be a list of lists with same length"
+            
+            #check for matrix
+            assert all(isinstance(item, (int, float))
+                    for sublist in elements for item in sublist), "sublist must contain only integers or floats"
+            
+            self.elements = elements
+            self.row_vector = False
+
+        
+        #if self.row_space() == 1:
+        #    self.row_vector = True
 
         return None
 
@@ -158,7 +173,8 @@ class Matrix(LinAlg):
 if __name__ == "__main__":
     m1 = Matrix([[1, 2, 3], [1, 2, 3], [1, 2, 3]])
     m3 = Matrix([[1, 2, 3], [1, 2, 3], [1, 2, 3]])
-    m2 = Matrix([[1], [2], [3], [4]])
+    m2 = Matrix([[1], [2], [3]])
 
+    print(Matrix([1,2,3]), m2)
     # print(m1*m2, m1.transpose(), m2.transpose())
-    print(m2.reshape(2), m2.flatten(), m3.pow(2,elementwise=False))
+    #print(m2.reshape(2), m2.flatten(), m3.pow(2,elementwise=False))
