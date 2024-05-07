@@ -5,4 +5,4 @@ __pycache__
 *report-main.synctex.gz
 *.out
 *.fls
-
+*.fdb_latexmk
