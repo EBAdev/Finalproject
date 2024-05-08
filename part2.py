@@ -12,7 +12,7 @@ def linear_load(filename) -> NetW:
 
 
 def linear_save(filename: str, network: NetW):
-    try:
+    try: # inspiration from: https://www.geeksforgeeks.org/create-a-file-if-not-exists-in-python/
         with open(filename, 'x') as f:
             f.write(str(network))
     except FileExistsError:
@@ -40,7 +40,7 @@ def argmax(v1: Matrix) -> int:
     return v1.elements[0].index(max(v1.elements[0]))  # ! Is this allowed?
 
 
-def catagorical(label, classes=10) -> Matrix:
+def catagorical(label:int, classes=10) -> Matrix:
     """
     Define catagorical 
     """
