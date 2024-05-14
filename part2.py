@@ -73,17 +73,22 @@ def evaluate(network: NetW, images: list[img], labels: list[int]):
 if __name__ == "__main__":
     filename = "mnist_linear.weights"
     nw = linear_load(filename)
+    #print(len(nw[1]))
     # linear_save(filename, nw)
-
     from part1 import read_images, read_labels, plot_images
     images = read_images("t10k-images-idx3-ubyte.gz")
+    #print(len(images))
     labels = read_labels("t10k-labels-idx1-ubyte.gz")
+    print(Matrix(nw[0]).row_space(), Matrix(nw[0]).col_space())
+    print(Matrix(images[0]).flatten().row_space(), Matrix(images[0]).flatten().col_space())
+    #print((images[1], labels[1]))
     #print(labels)
     #print(image_to_vector(images[0]))
     #print(mean_square_error(Matrix([1, 2, 3, 4]), Matrix([3, 1, 3, 2])))
     #print(argmax(Matrix([6, 2, 7, 10, 5])))
     #print(argmax(predict(nw, images[0])))
     #print([predict(nw, img) for img in images])
+    #print(predict(nw, images[0]))
     #print(evaluate(nw, images, labels))
-    predicions = evaluate(nw, images, labels)[0]
-    plot_images(images, labels, Matrix(nw[0]), predicions)
+    #predicions = evaluate(nw, images, labels)[0]
+    #plot_images(images, labels, Matrix(nw[0]), predicions)
