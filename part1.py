@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 
 from linalg import Matrix
 
-img = list[list[int]]  # 2d object of integer values
+img = list[list[int]]  
 
 #relevant comment
 
