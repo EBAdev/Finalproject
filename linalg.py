@@ -55,32 +55,26 @@ class Matrix(LinAlg):
         initiate a 2d-matrix class
         """
         # Input check for matrix
-        
-        #check for matrix and vector
+
+        # check for matrix and vector
         assert isinstance(elements, list), "elements must be a list"
 
         if all(isinstance(item, (int, float)) for item in elements):
-            #check for vectors
-            #assert all(isinstance(item, (int, float))
-            #        for item in elements), "vectors must contain only integers or floats"
-
             self.elements = [elements]
-            self.row_vector = True
+
         else:
-            #check for matrix
             assert all(isinstance(sublist, list) for sublist in elements) and all(len(sublist) == len(
                 elements[0]) for sublist in elements), "elements must be a list of lists with same length"
-            
-            #check for matrix
-            assert all(isinstance(item, (int, float))
-                    for sublist in elements for item in sublist), "sublist must contain only integers or floats"
-            
-            self.elements = elements
-            self.row_vector = False
 
-        
-        #if self.row_space() == 1:
-        #    self.row_vector = True
+            assert all(isinstance(item, (int, float))
+                       for sublist in elements for item in sublist), "sublist must contain only integers or floats"
+
+            self.elements = elements
+
+        self.row_vector = False
+
+        if self.row_space() == 1:
+            self.row_vector = True
 
         return None
 
@@ -108,7 +102,8 @@ class Matrix(LinAlg):
         return self.sub(matrix)
 
     def fact_mult(self, factor: int | float) -> Mat:
-        assert isinstance(factor, (int, float)), "factor multiplication of matricies is only defined with integers or floats."
+        assert isinstance(
+            factor, (int, float)), "factor multiplication of matricies is only defined with integers or floats."
         return Matrix([[factor*x for x in row] for row in self.elements])
 
     def transpose(self):
@@ -143,7 +138,8 @@ class Matrix(LinAlg):
         """
         Define powers of vectors as the elementwise power.
         """
-        assert isinstance(n, int), "elementwise power of matricies is only defined for factors"
+        assert isinstance(
+            n, int), "elementwise power of matricies is only defined for factors"
         if elementwise:
             return Matrix([[x**n for x in row] for row in self.elements])
         else:
@@ -166,7 +162,8 @@ class Matrix(LinAlg):
 
     def reshape(self, cols: int) -> Mat:
         values = self.flatten()[0]
-        assert (len(values) ** 0.5).is_integer(), "size of matrix must satsify len((sqrt(matrix))) is an integer"
+        assert (len(values) ** 0.5).is_integer(
+        ), "size of matrix must satsify len((sqrt(matrix))) is an integer"
         return Matrix([values[i:i+cols] for i in range(0, len(values), cols)])
 
 
@@ -175,6 +172,7 @@ if __name__ == "__main__":
     m3 = Matrix([[1, 2, 3], [1, 2, 3], [1, 2, 3]])
     m2 = Matrix([[1], [2], [3]])
 
-    print(Matrix([1,2,3]), m2)
+    print(Matrix([1, 2, 3]), m2)
+    print(m2.row_vector, (m2.transpose()).row_vector)
     # print(m1*m2, m1.transpose(), m2.transpose())
-    #print(m2.reshape(2), m2.flatten(), m3.pow(2,elementwise=False))
+    # print(m2.reshape(2), m2.flatten(), m3.pow(2,elementwise=False))
