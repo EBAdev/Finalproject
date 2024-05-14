@@ -1,10 +1,13 @@
 """
 Homemade linear algebra module to use for MNIST.
+
+Module string 
 """
 
-from typing import Type
+from typing import Type, Union, List
 
 Mat = Type["Matrix"]
+matrix_input = Union[List[List[Union[int, float]]], List[Union[int, float]]]
 
 
 class LinAlg:
@@ -50,7 +53,7 @@ class LinAlg:
 
 
 class Matrix(LinAlg):
-    def __init__(self, elements) -> None:
+    def __init__(self, elements: matrix_input) -> None:
         """
         initiate a 2d-matrix class
         """
@@ -161,6 +164,15 @@ class Matrix(LinAlg):
         return Matrix([[val for row in self.elements for val in row]])
 
     def reshape(self, cols: int) -> Mat:
+        """
+        Reshapes the matrix to a square matrix of size cols:
+
+        Args
+        1. Cols (int): Size of our square matrix.
+
+        Output
+        * Matrix : Square matrix
+        """
         values = self.flatten()[0]
         assert (len(values) ** 0.5).is_integer(
         ), "size of matrix must satsify len((sqrt(matrix))) is an integer"

@@ -1,11 +1,7 @@
 import gzip
 import random
-
 import matplotlib.pyplot as plt
 import json
-import random
-
-
 from linalg import Matrix
 
 img = list[list[int]]  # 2d object of integer values
@@ -50,10 +46,10 @@ def read_images(filename: str) -> list[img]:
         num_row = int.from_bytes(f.read(4), byteorder="big")
         num_col = int.from_bytes(f.read(4), byteorder="big")
 
-        return [[[byte for byte in f.read(num_row)] for col in range(num_col)] for img in range(num_img)]
+        return [[[byte for byte in f.read(num_row)] for _col in range(num_col)] for _img in range(num_img)]
 
 
-def plot_images(images: list[img], labels: list[int],  Weight_matrix: Matrix, prediction: list[int] = None,):
+def plot_images(images: list[img], labels: list[int],  Weight_matrix: Matrix, prediction: list[int] = []):
     """
     Plot the first images in a list of images, along with the corresponding labels.
 
@@ -68,7 +64,7 @@ def plot_images(images: list[img], labels: list[int],  Weight_matrix: Matrix, pr
     * Opens a matplotlib plot of the first rows x cols images.
     """
 
-    fig, axes = plt.subplots(4, 5, figsize=(5, 4))
+    axes = plt.subplots(4, 5, figsize=(5, 4))[1]
 
     A_T = Weight_matrix.transpose()
     weight_images = [Matrix(row).reshape(28) for row in A_T]
@@ -90,57 +86,93 @@ def plot_images(images: list[img], labels: list[int],  Weight_matrix: Matrix, pr
                     label = f"Failed: {
                         prediction[idx]},\n Correct: {labels[idx]}."
                     color = "Reds"
-
             ax.imshow(images[idx], cmap=color, vmin=0, vmax=255)
             ax.set_title(label, fontsize=10)
         else:
             ax.imshow(weight_images[idx-10].elements,
                       cmap="hot", vmin=-1, vmax=1)
             ax.set_title(idx-10, fontsize=10)
-
     plt.tight_layout()
     plt.show()
-
     return None
 
 
 # part 2
-def linear_load(filename) -> NetW:
+def linear_load(filename: str) -> NetW:
+    """
+    Load a json file of filename in as a NetW
+    Args:
+    1. filename (str): The filename of the .weights file
+
+    Returns:
+    * NetW: A network consisting of a list of A and b.
+    """
     with open(filename) as f:
         weights = json.load(f)
     return weights
 
 
-def linear_save(filename: str, network: NetW):
-    try:  # inspiration from: https://www.geeksforgeeks.org/create-a-file-if-not-exists-in-python/
+def linear_save(filename: str, network: NetW) -> None:
+    """
+    # inspiration from: https://www.geeksforgeeks.org/create-a-file-if-not-exists-in-python/
+    Save a .weights file 
+
+    Args:
+    1. filename (str): The filename of the .weights file.
+
+    Returns:
+    * None: It only saves the .weights file.
+    """
+    try:  
         with open(filename, 'x') as f:
             f.write(str(network))
     except FileExistsError:
         with open(filename, "w") as f:
             f.write(str(network))
-
+    return None
 
 def image_to_vector(image: img) -> Matrix:
+    """
+    Takes a image an makes it to a vector and normalize each entry.
+
+    Args:
+    1. image (img): an image that satisfies the criteria for the MNIST images.
+
+    Returns:
+    * Matrix: a row vector with entries in the range [0,1]
+    """
     return Matrix([x/255 for row in image for x in row])
 
 
-def mean_square_error(v1: Matrix, v2: Matrix) -> Matrix:
+def mean_square_error(v1: Matrix, v2: Matrix) -> float:
     """
     Define the mean squared error between two vectors
+    
+    Args:
+    1. v1 (Matrix): The first vector
+    2. v2 (Matrix): The second vector
+
+    Returns:
+    * float: The mean squared error
     """
     assert v1.row_vector and v2.row_vector, "mean squared error is only defined between row vetors"
-    return sum(((v1-v2)**2)[0])/v1.col_space()
+    return sum(((v1 - v2)**2)[0])/v1.col_space()
 
 
 def argmax(v1: Matrix) -> int:
     """
     Define argmax for a vector.
+    
+    Args:
+    1. v1 (Matrix): is a row vector
+    Returns:
+    * int: the index of the largest element of a vector
     """
     assert v1.row_vector, "argmax is only defined for vectors"
-    return v1.elements[0].index(max(v1.elements[0]))  # ! Is this allowed?
+    return v1.elements[0].index(max(v1.elements[0]))
 
 
-def catagorical(label: int, classes=10) -> Matrix:
+def catagorical(label: int, classes: int = 10) -> Matrix:
     """
     Define catagorical
     """
@@ -152,7 +184,7 @@ def predict(network: NetW, image: img) -> Matrix:
     x = image_to_vector(image)
     A = Matrix(network[0])
     b = Matrix(network[1])
-    return x*A+b
+    return x * A + b
 
 
 def evaluate(network: NetW, images: list[img], labels: list[int]):
