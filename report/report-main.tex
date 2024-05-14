@@ -1,7 +1,12 @@
 \documentclass[a4paper,oneside,article,english]{memoir}
-% remember to change language
 
 \input{preamble.tex}
+
+
+
+\title{Final Project -- IPSA 2024}
+\author{Emil B. A. \& Mathias K. N.}
+
 
 \begin{document}
 
@@ -25,9 +30,9 @@
 \multicolumn{1}{l}{Name} & 
 \multicolumn{1}{l}{\% contributed} \\
 \hline
-202204939 &Emil Beck Aagaard Korneliussen &  \\ % Student 1
+202204939 &Emil Beck Aagaard Korneliussen & 60 \\ % Student 1
 \hline
-& & \\ % Student 2
+202208528 &Mathias Kristoffer Nejsum  &40 \\ % Student 2
 \hline
 \end{tabularx}
 \centerline{max 3 students}
@@ -37,7 +42,25 @@ Briefly state the contributions of each of the group members to the project
 \\
 \begin{tabularx}{\textwidth}{|X|}
 \hline
+\bigskip
 % Your comment goes here
+Since Mathias had some handins due, before he was able to contribute to the
+project, Emil started doing the first part. Therefore Emils contribution is
+a bit higher than Mathias. 
+
+Most of the work we did besides each other but, some code was written purely by Emil or
+Mathias. 
+\smallskip
+
+Emil has written all the code which works with loading and saving of files,
+as well as functions such as \pythoninline{predict, catagorical} and
+\pythoninline{learn}. 
+\smallskip
+
+Mathias has written
+all the code for the plotting the network, as well as the functions
+\pythoninline{update} and \pythoninline{plot\_images} and also some matrix algebra. 
+\bigskip
 \\[3cm]
 \hline 
 \end{tabularx}
@@ -48,12 +71,10 @@ Briefly state the contributions of each of the group members to the project
 \textbf{Note on plagiarism} 
 \\[2ex]
 Since the evaluation of the project report and code will be part of the final grade in the course, \textbf{plagiarism in your project handin will be considered cheating at the exam}. Whenever adopting code or text from elsewhere you must state this and give a reference/link to your source. It is perfectly fine to search information and adopt partial solutions from the internet – actually, this is encouraged – but always state your source in your handin. Also discussing your problems with your project with other students is perfectly fine, but remember each group should handin their own solution. If you are in doubt if you solution will be very similar to another group because you discussed the details, please put a remark that you have discussed your solution with other groups.
+\bigskip
 
 \begin{raggedleft}
-
-For more Aarhus University information on plagiarism, please visit \\
-\url{http://library.au.dk/en/students/plagiarism/}
-
+For more Aarhus University information on plagiarism, please visit\newline \url{http://library.au.dk/en/students/plagiarism/}
 \end{raggedleft}
 \newpage
 
@@ -61,7 +82,112 @@ For more Aarhus University information on plagiarism, please visit \\
 
 % Your report text goes here
 
+\chapter{Introduction}  
+\label{ch:introduction}
+
+For our final project in Introduction to Programming with Scientific
+Applications (IPSA), we have decided to do project IV on MNIST Image
+Classification. In this project we will create a linear classifier that
+identifies handwritten digits. We have written code for all mandatory questions in all three
+parts 1-3.
+
+% chapter (end)
 
 
+\chapter{Discussion of code}  
+\label{ch:structure_of_code}
+This chapter is a serves as a introduction to the general codebase that we have
+written. We will discuss both the design choices, dependencies and general
+structure of the implementation, we will also discuss our main ideas for optimization.
+
+\section{Structure of code}  
+\label{sec:structure_of_code}
+
+The MNIST project questions consists of three parts:
+\begin{enumerate}
+  \item Loading and saving of MNIST database files, and visualisation.
+  \item Testing and evaluation of a set of weights for a linear classifier.
+  \item Updating and learning a set of weights for a linear classifier.
+\end{enumerate}
+This provides a natural test based development approach to the project, since
+code written in parts $1.$ and later $2.$ is used extensively to test any new
+code written for the later parts. Naturally this progession is also used in the
+structure of our codebase, reading from the top we first have imports such that
+any dependencies are not hidden in the code base, then we have type hint
+definitions which are used as abbreviations for specific types. These type hints
+are used to make the code more readable, while providing a clear understanding
+of both function argument types and return types. 
+
+After these definitions the actual code begins, the functions appear in the same
+order as they are described on the project page. Thus, as already mentioned any
+function that can be used to test another function will be stated above that
+function. As a specific example all the loading and saving of files is stated
+before any function that utilizes the content of said files.
+
+% section (end)
+\section{Design choices}  
+\label{sec:design_choices}
+
+A major design choice of our codebase is that we have extracted all the linear
+algebra functions into their own class contained in a separate file
+\pythoninline{linalg.py}. This is a common practice during development of larger
+codebases known as subprocess extraction, and it allows us to make the code more
+readable and maintainable. The main goal was that we would define operations
+such as matrix addition, scalar multiplication and matrix multiplication without
+the need for appending a matrix object with \pythoninline{Matrix.add(Matrix)}.
+To do this we have implemented a lot of dunder\footnote{abrv. for double
+underscore} methods. This allows us to write clear and concise functions, for
+instance, have a look at the prediction function, in which a network consisting
+of a weight matrix $A$, and a basis vector $b$ is used to generate a guess
+vector:
+\begin{python}
+def predict(network: NetW, image: img) -> Matrix:
+  x = image_to_vector(image)
+  A = Matrix(network[0])
+  b = Matrix(network[1])
+  return x*A+b
+\end{python}
+% section (end)
+
+\section{Dependencies}  
+\label{sec:dependencies}
+Random, matplotlib, gzip, json
+
+
+% section (end)
+
+\section{Visualisation}  
+\label{ch:visualisation}
+
+
+
+% section (end)
+
+
+\section{Ideas for optimization}  
+\label{sec:ideas_for_optimization}
+
+
+
+% section (end)
+
+
+
+% chapter (end)
+
+
+
+\chapter{Reflection upon implementation}  
+\label{ch:reflection_upon_implementation}
+
+\section{Challenges during development}  
+\label{sec:challenges_during_development}
+
+
+
+% section (end)
+
+
+% chapter (end)
 
 \end{document}
