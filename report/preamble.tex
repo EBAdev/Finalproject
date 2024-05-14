@@ -8,13 +8,12 @@
 \usepackage{microtype}  % Typografi! Giver bl.a. pænere orddeling
 \usepackage[english]{babel}  % Danske betegnelser og orddeling
 
-\usepackage{amsmath, amssymb, bm, mathtools}  % Giver adgang til matematikting
+\usepackage{amsmath, amssymb,amsfonts, bm, mathtools}  % Giver adgang til matematikting
 \usepackage[Gray,squaren,thinqspace,thinspace]{SIunits} % Gør det muligt at angive enheder
 
 \usepackage{graphicx}  % Gør det muligt at indsætte billeder
 \usepackage{url} % Bruges til indsættelse af url direkte
 \usepackage{float} % gør det muligt at tvinge en figurs placering med [H]
-\usepackage{listings} %Gør det muligt at indsætte pæn code
 \usepackage[small,bf,hang]{caption}  %Gør caption bold
 \usepackage{subcaption} % Gør det muligt at lave delfigurer
 \usepackage{lipsum}
@@ -468,4 +467,98 @@
 % Add \contra symbol to denote contradiction
 \usepackage{stmaryrd} % for \lightning
 \newcommand\contra{\scalebox{1.5}{$\lightning$}}
+
+%%%%%%%%%%%%%%%%%%%%
+% Code formatting	 %
+%%%%%%%%%%%%%%%%%%%%
+
+\usepackage{listings} %Gør det muligt at indsætte pæn code
+
+% Default fixed font does not support bold face
+\DeclareFixedFont{\ttb}{T1}{txtt}{bx}{n}{10} % for bold
+\DeclareFixedFont{\ttm}{T1}{txtt}{m}{n}{10}  % for normal
+
+
+\definecolor{darkred}{rgb}{0.6,0.0,0.0}
+\definecolor{darkgreen}{rgb}{0,0.50,0}
+\definecolor{lightblue}{rgb}{0.0,0.42,0.91}
+\definecolor{orange}{rgb}{0.99,0.48,0.13}
+\definecolor{grass}{rgb}{0.18,0.80,0.18}
+\definecolor{pink}{rgb}{0.97,0.15,0.45}
+
+
+% General Setting of listings
+\lstset{
+  aboveskip=1em,
+  breaklines=true,
+  abovecaptionskip=-6pt,
+  captionpos=b,
+  escapeinside={\%*}{*)},
+  frame=single,
+  numbers=left,
+  numbersep=15pt,
+  numberstyle=\tiny,
+}
+% 0. Basic Color Theme
+\lstdefinestyle{colored}{ %
+  basicstyle=\ttfamily,
+  backgroundcolor=\color{white},
+  commentstyle=\color{green}\itshape,
+  keywordstyle=\color{blue}\bfseries\itshape,
+  stringstyle=\color{red},
+}
+% 1. General Python Keywords List
+\lstdefinelanguage{PythonPlus}[]{Python}{
+  morekeywords=[1]{,as,assert,nonlocal,with,yield,self,True,False,None,}, % Python builtin
+  morekeywords=[2]{,__init__,__add__,__mul__,__div__,__sub__,__call__,__getitem__,__setitem__,__eq__,__ne__,__nonzero__,__rmul__,__radd__,__repr__,__str__,__get__,__truediv__,__pow__,__name__,__future__,__all__,predict,add,catagorical,learn,update,plot_images,read_labels,read_images,plot_images,linear_load,linear_save,image_to_vector,mean_square_error,argmax,evaluate,create_batches,col_space,row_space,isinstance,fact_mult,transpose,mat_mult,pow,flatten,reshape,}, % magic methods
+  morekeywords=[3]{,object,type,isinstance,copy,deepcopy,zip,enumerate,reversed,list,set,len,dict,tuple,range,xrange,append,execfile,real,imag,reduce,str,repr,}, % common functions
+  morekeywords=[4]{,Exception,NameError,IndexError,SyntaxError,TypeError,ValueError,OverflowError,ZeroDivisionError,}, % errors
+  morekeywords=[5]{,ode,fsolve,sqrt,exp,sin,cos,arctan,arctan2,arccos,pi,
+  array,norm,solve,dot,arange,isscalar,max,sum,shape,find,any,all,abs,plot,linspace,legend,quad,polyval,polyfit,hstack,concatenate,vstack,column_stack,empty,zeros,ones,rand,vander,grid,pcolor,eig,eigs,eigvals,svd,qr,tan,det,logspace,roll,min,mean,cumsum,cumprod,diff,vectorize,lstsq,cla,eye,xlabel,ylabel,squeeze,Matrix,LinAlg}, % numpy / math
+}
+% 2. New Language based on Python
+\lstdefinelanguage{PyBrIM}[]{PythonPlus}{
+  emph={d,E,a,Fc28,Fy,Fu,D,des,supplier,Material,Rectangle,PyElmt},
+}
+% 3. Extended theme
+\lstdefinestyle{colorEX}{
+  basicstyle=\ttfamily,
+  backgroundcolor=\color{white},
+  commentstyle=\color{darkgreen}\slshape,
+  keywordstyle=\color{blue}\bfseries\itshape,
+  keywordstyle=[2]\color{blue}\bfseries,
+  keywordstyle=[3]\color{grass},
+  keywordstyle=[4]\color{red},
+  keywordstyle=[5]\color{orange},
+  stringstyle=\color{darkred},
+  emphstyle=\color{pink}\underbar,
+  frame=tb,                         % Any extra options here
+  showstringspaces=false,
+}
+
+
+% Python style for highlighting
+\newcommand\pythonstyle{\lstset{
+style=colorEX,
+language=PyBrIM,
+}}
+
+
+% Python environment
+\lstnewenvironment{python}[1][]
+{
+\pythonstyle
+\lstset{#1}
+}
+{}
+
+
+% Python for external files
+\newcommand\pythonexternal[2][]{{
+\pythonstyle
+\lstinputlisting[#1]{#2}}}
+
+% Python for inline
+\newcommand\pythoninline[1]{{\pythonstyle\lstinline!#1!}}
+
 
