@@ -15,17 +15,13 @@ class LinAlg:
         """
         Method to return the column space of a LinAlg class
         """
-        if isinstance(self.elements[0], (int, float)):
-            return 1
         return len(self.elements[0])
 
     def row_space(self):
         """
         Method to return the row space of a LinAlg class
         """
-        if isinstance(self.elements[0], (int, float)):
-            return 1
-        return len([row for row in self.elements])
+        return len(self.elements)
 
     def __iter__(self):
         """
@@ -38,7 +34,7 @@ class LinAlg:
         """
         Method to return the next element in a LinAlg class
         """
-        if self.idx+1 <= len(self.elements):
+        if self.idx < len(self.elements):
             x = self.elements[self.idx]
             self.idx += 1
             return x
@@ -57,27 +53,20 @@ class Matrix(LinAlg):
         """
         initiate a 2d-matrix class
         """
-        # Input check for matrix
-
-        # check for matrix and vector
         assert isinstance(elements, list), "elements must be a list"
 
+        # Vector input
         if all(isinstance(item, (int, float)) for item in elements):
             self.elements = [elements]
 
-        else:
+        else:  # 2D matrix
             assert all(isinstance(sublist, list) for sublist in elements) and all(len(sublist) == len(
                 elements[0]) for sublist in elements), "elements must be a list of lists with same length"
-
             assert all(isinstance(item, (int, float))
                        for sublist in elements for item in sublist), "sublist must contain only integers or floats"
-
             self.elements = elements
 
-        self.row_vector = False
-
-        if self.row_space() == 1:
-            self.row_vector = True
+        self.row_vector = self.row_space() == 1
 
         return None
 
@@ -86,6 +75,7 @@ class Matrix(LinAlg):
             matrix, Matrix), "Addition is only defined between two matricies."
         assert self.row_space() == matrix.row_space() and self.col_space() == matrix.col_space(
         ), "addition is only defined between matricies with the same row and column dimension."
+
         return Matrix([[x+y for (x, y) in zip(row_self, row_other)] for row_self,
                        row_other in zip(self.elements, matrix.elements)])
 
@@ -93,7 +83,12 @@ class Matrix(LinAlg):
         return self.add(matrix)
 
     def __str__(self) -> str:
-        return f"Matrix: <{self.elements}>"
+        max_width = max(max(len(str(x)) for x in row) for row in self.elements)
+        matrix_str = ""
+        for row in self.elements:
+            matrix_str += "| " + \
+                " ".join(f"{x:>{max_width}}" for x in row) + " |\n"
+        return matrix_str
 
     def sub(self, matrix: Mat) -> Mat:
         """
@@ -146,9 +141,10 @@ class Matrix(LinAlg):
         if elementwise:
             return Matrix([[x**n for x in row] for row in self.elements])
         else:
-            mat = 1
-            for _ in range(n):
-                mat *= Matrix(self.elements)
+            mat = Matrix(self.elements)
+
+            for _ in range(n-1):
+                mat *= self
             return mat
 
     def __pow__(self, n: int):
@@ -173,18 +169,17 @@ class Matrix(LinAlg):
         Output
         * Matrix : Square matrix
         """
+        print(self)
         values = self.flatten()[0]
         assert (len(values) ** 0.5).is_integer(
-        ), "size of matrix must satsify len((sqrt(matrix))) is an integer"
+        ) or cols == 1, "size of matrix must satsify len((sqrt(matrix))) is an integer"
         return Matrix([values[i:i+cols] for i in range(0, len(values), cols)])
 
 
 if __name__ == "__main__":
     m1 = Matrix([[1, 2, 3], [1, 2, 3], [1, 2, 3]])
     m3 = Matrix([[1, 2, 3], [1, 2, 3], [1, 2, 3]])
-    m2 = Matrix([[1], [2], [3]])
+    m2 = Matrix([[1], [3], [4], [5]])
 
-    print(Matrix([1, 2, 3]), m2)
-    print(m2.row_vector, (m2.transpose()).row_vector)
     # print(m1*m2, m1.transpose(), m2.transpose())
-    # print(m2.reshape(2), m2.flatten(), m3.pow(2,elementwise=False))
+    print(m1+m3, m1*m3, m2.flatten(), m3.pow(2, elementwise=False), sep="\n")
