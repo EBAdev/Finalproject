@@ -135,7 +135,7 @@ codebases known as subprocess extraction, and it allows us to make the code more
 readable and maintainable. The main goal was that we would define operations
 such as matrix addition, scalar multiplication and matrix multiplication without
 the need for appending a matrix object with \pythoninline{Matrix.add(Matrix)}.
-To do this we have implemented a lot of dunder\footnote{abrv. for double
+To do this we have implemented a lot of dunder\footnote{abbreviation for double
 underscore} methods. This allows us to write clear and concise functions, for
 instance, have a look at the prediction function, in which a network consisting
 of a weight matrix $A$, and a basis vector $b$ is used to generate a guess
@@ -147,6 +147,39 @@ def predict(network: NetW, image: img) -> Matrix:
   b = Matrix(network[1])
   return x*A+b
 \end{python}
+By defining methods \pythoninline{__mul__} and \pythoninline{__add__} we can
+effectively \emph{hide} list comprehensions in the well known operators * and
++. Thus, using this extraction principal, it becomes strikingly clear what the
+prediction function does, which helps with debugging. 
+
+One important design choice that we want to highlight in this linear algebra
+module, is that we actually dont make a distinction between (row)vectors i.e.
+1-dimensional lists and matrices, 2-dimensional lists. When we first started our
+development, we actually did make that distinction, and therefore we initially
+made two subclasses one for vectors and one for matrices. But when we started
+actually using the module we discovered that the difference between the two
+classes was miniscule. Honestly the fact that we had made a clear distinction
+between the two types, lead to ugly code. A good example of this problem would
+be when, we wanted to convert a row vector into a column vector, then we would
+have to write:
+\begin{python}
+Matrix([Vector.elements]).transpose()
+\end{python}
+To solve this problem we wrote a new \pythoninline{Matrix.__init__()}
+constructor to handle inputs of both 1- and 2-dimensional lists. One problem we
+then had to fix was that the codebase has some code that can only be used on row
+vectors, to accommodate any potential errors we decided to implement a boolean
+property that all matrices have, appropriately named
+\pythoninline{Matrix.row_vector}. Then any function that is only defined as
+a row vector can just use and assertion statement to check that the provided
+\pythoninline{Matrix} input is correct. This, new implementation did also fix
+the before mentioned problem of converting row vectors to column vectors:
+\begin{python}
+row_vec = Matrix([x,...,z]) # Create a row vector using a 1D list 
+col_vec = row_vec.transpose() 
+\end{python}
+
+
 % section (end)
 
 \section{Dependencies}  
