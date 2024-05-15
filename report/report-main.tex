@@ -196,29 +196,71 @@ Random, matplotlib, gzip, json
 
 % section (end)
 
+\section{Challenges during development}  
+\label{sec:challenges_during_development}
+
+One problem we faced during development was that in the third part of the
+project, which as mentioned in \cref{sec:structure_of_code}, consists of
+updating a linear classifier given some evaluation was quite hard. This was due
+to two different aspects. Firstly the functions \pythoninline{update()} and
+\pythoninline{learn()} depend on almost the full codebase. This meant that
+locating any bugs or bad code during development of these functions was way
+harder, since the bug could have come from other places in the codebase that
+were misbehaving. To solve this we made sure to properly test all functions in
+both parts 1. and 2. such that any error were less likely to come from these
+parts of the codebase. The other reason as to this part posing more
+difficulties during development is that the maths simply got harder. This meant
+that we had to spend some time at a blackboard in order to figure out the
+expected results from the matrix operations. The fact that this part would be
+the challenging part stood clear to us after the first read of the project
+description. Thus, in order to ensure we had enough time to meet the project
+deadline, we started development of parts 1. and 2. before we finished our
+handins. This meant that we had time to finish these parts and focus on the
+third more challenging part of the project 
+% section (end)
 
 \section{Ideas for optimization}  
 \label{sec:ideas_for_optimization}
 
+The first problem that comes to mind, when reflecting upon the performance of
+our code is that both evaluation and training a new set of weights is quite
+slow. There are many reasons for this, but we suspect that the main reason is
+they way that we compute our numbers. Currently we have written our own linear
+algebra module, but even though we think of our selves as principalled
+programmers. There is no way that our module can even come close to the
+computation time that a module like \pythoninline{numpy} would be able to. Thus,
+we suspect that a major optimization would be to just implement their module,
+and let \pythoninline{numpy.array} handle the computations. This would of course
+add another dependency, but since \pythoninline{numpy} is a very well maintained
+codebase, it would not pose a major concern.
 
+The design choice of extracting all the maths into its own module as described
+in \cref{sec:design_choices}. Probably also poses a small drawback in terms of
+runtime, this is because every time we return a computation such as an addition,
+we return a new instance of the class, as such:
+\begin{python}
+def add(self, matrix: Mat) -> Mat: 
+  # we have removed assertion statements for clarity
+  return Matrix([[x+y for (x, y) in zip(row_self, row_other)] for row_self, row_other in zip(self.elements, matrix.elements)])
+\end{python}
+In general creating a new instance of a class not only means calling
+\pythoninline{Matrix.__init__()} again but the storage in bytes is also bigger.
+This is because there is a lot of overhead in the storage of a class, and we
+suspect that this poses a drawback for the runtime complexity of our codebase,
+since we are doing a lot of operations per epoch. Thus, even though the class
+syntax is much more elegant, our design choice might be slowing the main
+functionality a bit down. In order to combat this we could as mentioned either
+not create a new instance of the class, or simply remove the class and write
+functions to do the computation instead. As this is a project with a deadline we
+unfortunately did not have time to make a comparison between our current
+implementation and a functional implementation. Such a comparison would have
+been interesting since, if it were the case that the code would run a lot
+faster, then such an implementation would not add another dependency to the
+codebase, as apposed to the aforementioned \pythoninline{numpy} implementation.
 
 % section (end)
 
 
-
-% chapter (end)
-
-
-
-\chapter{Reflection upon implementation}  
-\label{ch:reflection_upon_implementation}
-
-\section{Challenges during development}  
-\label{sec:challenges_during_development}
-
-
-
-% section (end)
 
 
 % chapter (end)
