@@ -1,6 +1,5 @@
 import gzip
 import matplotlib.pyplot as plt
-
 from linalg import Matrix
 
 img = list[list[int]]  
@@ -48,7 +47,7 @@ def read_images(filename: str) -> list[img]:
         return [[[byte for byte in f.read(num_row)] for col in range(num_col)] for img in range(num_img)]
 
 
-def plot_images(images: list[img], labels: list[int],  Weight_matrix: Matrix, prediction: list[int] = None,):
+def plot_images(images: list[img], labels: list[int],  Weight_matrix: Matrix, prediction: list[int] = []):
     """
     Plot the first images in a list of images, along with the corresponding labels.
 
@@ -63,46 +62,56 @@ def plot_images(images: list[img], labels: list[int],  Weight_matrix: Matrix, pr
     * Opens a matplotlib plot of the first rows x cols images.
     """
 
-    fig, axes = plt.subplots(4, 5, figsize=(5, 4))
-
+    fig, (axes) = plt.subplots(nrows= 4, ncols=5, figsize=(10, 8), gridspec_kw={'wspace': 0.5})
+    axes1 = axes[0:2]
+    axes2 = axes[2:]
+    print(len(axes1), len(axes2))
     A_T = Weight_matrix.transpose()
-    weight_images = [Matrix([row]).reshape(28) for row in A_T]
+    weight_images = [Matrix(row).reshape(28) for row in A_T]
 
-    for idx, ax in enumerate(axes.flat):
+    for idx, ax in enumerate(axes1.flat):
         ax.tick_params(left=False, right=False, labelleft=False,
                        labelbottom=False, bottom=False)
-        if idx+1 <= 10:
-            # if there is a prediction for image
-            color = "gray_r"
-            try:
-                prediction[idx]
-            except IndexError and TypeError:
-                label = str(labels[idx])
-            else:
-                if prediction[idx] == labels[idx]:
-                    label = f"Correct: {labels[idx]}."
-                else:
-                    label = f"Failed: {prediction[idx]},\n Correct: {labels[idx]}."
-                    color = "Reds"
-
-            ax.imshow(images[idx], cmap=color, vmin=0, vmax=255)
-            ax.set_title(label, fontsize=10)
+        # if there is a prediction for image
+        color = "gray_r"
+        try:
+            prediction[idx]
+        except IndexError and TypeError:
+            label = str(labels[idx])
         else:
-            normdata = ax.imshow(weight_images[idx-10].elements,
-                      cmap="hot", vmin=-1, vmax=1)
-            ax.set_title(idx-10, fontsize=10)
+            if prediction[idx] == labels[idx]:
+                label = f"Correct: {labels[idx]}."
+            else:
+                label = f"Failed: {prediction[idx]},\n Correct: {labels[idx]}."
+                color = "Reds"
+        ax.imshow(images[idx], cmap=color, vmin=0, vmax=255)
+        ax.set_title(label, fontsize=10)
 
-   ###få lige det her til at fungere
-    fig.colorbar(normdata, ax=axes.ravel().tolist(), shrink=0.8)
-    plt.subplots_adjust(left=0.1, right=0.9, top=0.9, bottom=0.1, wspace=0.4, hspace=1)
-    #plt.tight_layout()
+    for idx, ax in enumerate(axes2.flat):
+        ax.tick_params(left=False, right=False, labelleft=False,
+                       labelbottom=False, bottom=False)
+        im = ax.imshow(weight_images[idx].elements, cmap="hot", vmin=-1, vmax=1)
+        ax.set_title(idx, fontsize=10)
+    fig.colorbar(im, ax=axes2[:,-1])
+    plt.tight_layout()
     plt.show()
-
     return None
+
+"""
+    for idx, ax in enumerate(axes2.flat):
+        ax.tick_params(left=False, right=False, labelleft=False,
+                       labelbottom=False, bottom=False)
+        im = ax.pcolormesh(weight_images[idx].elements, cmap="hot", vmin=-1, vmax=1)
+        ax.set_title(idx, fontsize=10) 
+""" 
 
 
 if __name__ == "__main__":
+    from part2 import linear_load, evaluate
     labels = read_labels("t10k-labels-idx1-ubyte.gz")
     images = read_images("t10k-images-idx3-ubyte.gz")
-    for row in images[0]:
-        print(row)
+    filename = "mnist_linear.weights"
+    nw = linear_load(filename)
+    predicions = evaluate(nw, images, labels)
+    print(f"cost: {predicions[1]} and accuracy: {predicions[2]}")
+    plot_images(images, labels, Matrix(nw[0]), predicions[0])

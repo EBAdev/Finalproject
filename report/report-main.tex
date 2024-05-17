@@ -96,7 +96,7 @@ parts 1-3.
 
 \chapter{Discussion of code}  
 \label{ch:structure_of_code}
-This chapter is a serves as a introduction to the general codebase that we have
+This chapter serves as a introduction to the general codebase that we have
 written. We will discuss both the design choices, dependencies and general
 structure of the implementation, we will also discuss our main ideas for optimization.
 
@@ -171,7 +171,7 @@ then had to fix was that the codebase has some code that can only be used on row
 vectors, to accommodate any potential errors we decided to implement a boolean
 property that all matrices have, appropriately named
 \pythoninline{Matrix.row_vector}. Then any function that is only defined as
-a row vector can just use and assertion statement to check that the provided
+a row vector can just use an assert statement to check that the provided
 \pythoninline{Matrix} input is correct. This, new implementation did also fix
 the before mentioned problem of converting row vectors to column vectors:
 \begin{python}
@@ -184,18 +184,47 @@ col_vec = row_vec.transpose()
 
 \section{Dependencies}  
 \label{sec:dependencies}
-Random, matplotlib, gzip, json
+In this project we were told that we could not use libraries such as NumPy, Keras or others except if it was stated otherwise. This means that we have generally avoided using dependencies. However we have deemed it fit to use a few modules anyway, for certain purposes. The modules are limited to: 
+\begin{itemize}
+    \item \pythoninline{random}
+    \item \pythoninline{matplotlib}
+    \item \pythoninline{gzip}
+    \item \pythoninline{json}
+\end{itemize}
+
+We decided to use these libraries since, they are very convenient for their certain purpose and the role they played in the project did not seem to be the main learnign objective. Whereas if we have used e.g. \pythoninline{NumPy} some of the questions in the project would have become redundant, since \pythoninline{NumPy} had already implemented it.
 
 
 % section (end)
 
-\section{Visualisation}  
+\section{Visualisation and Performance of our neural network}  
 \label{ch:visualisation}
+Througout this project we have tested the network in different capacities. 
+\subsection{Part 2}
+It started in part 2 where we had to create a function, \pythoninline{evaluate}, based on a given (already trained) network could evaluate the prediction and tell how often the network comprehended the image satisfactory and returned the right number. From this we have a accuracy of $92\%$. 
 
+From this we also had to plot the first few images from the set of images we did this both as just the image where the label the asssed wether or not we guessed right. This plot also holds a plot of the number 0 through 9 and how their linear classifier weights are distributed. which gives a bit of an understanding of how it works.
+
+%insert graph from plot_images
+\begin{figure}[H]
+    \centering
+    \includegraphics[scale = 0.5]{plot_image_eval.png}
+    \caption{The first few images of image classification from the trained network}
+    \label{fig:evaluation}
+\end{figure}
+
+\subsection{Part 3}
+In Part three we have to train the network. We then found it interesting to asses how it performs throughout the iterations. Thus we have constructed this plot of the development of accuracy and cost over evaluated after ever update so we can get a closer look at the rate of learning for the network.
+%%%
+
+%insert graph accuracy, plot
+
+%%%
+
+As we see the accuracy tops at around $86\%$ and a cost of around 0.04. We have deemed this to be ok results, but we could probably have better results if we decreased the step size leading to a more precise estimation of the minimum of the cost function. Thus we see that our accuracy is slightly lower than the trained network that we were given.
 
 
 % section (end)
-
 \section{Challenges during development}  
 \label{sec:challenges_during_development}
 
