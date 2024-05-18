@@ -74,7 +74,8 @@ Since the evaluation of the project report and code will be part of the final gr
 \bigskip
 
 \begin{raggedleft}
-For more Aarhus University information on plagiarism, please visit\newline \url{http://library.au.dk/en/students/plagiarism/}
+For more Aarhus University information on plagiarism, please visit\newline
+\underline{\url{http://library.au.dk/en/students/plagiarism/}} 
 \end{raggedleft}
 \newpage
 
@@ -184,20 +185,30 @@ col_vec = row_vec.transpose()
 
 \section{Dependencies}  
 \label{sec:dependencies}
-In this project we were told that we could not use libraries such as NumPy, Keras or others except if it was stated otherwise. This means that we have generally avoided using dependencies. However we have deemed it fit to use a few modules anyway, for certain purposes. The modules are limited to: 
+In this project we were told that we could not use libraries such as NumPy,
+Keras or others except if it was stated otherwise. This means that we have
+generally avoided using dependencies. However we have deemed it fit to use a few
+modules anyway, for certain purposes. The modules are limited to: 
 \begin{itemize}
-    \item \pythoninline{random}
-    \item \pythoninline{matplotlib}
-    \item \pythoninline{gzip}
-    \item \pythoninline{json}
+  \item
+    \href{https://docs.python.org/3/library/random.html}{\underline{\pythoninline{random}}}
+    (for generating random numbers)
+  \item \href{https://matplotlib.org}{\underline{\pythoninline{matplotlib}}} (for
+    visualisation)
+  \item
+    \href{https://docs.python.org/3/library/gzip.html}{\underline{\pythoninline{gzip}}}
+    (for unpacking MNIST \pythoninline{.gz} files)
+  \item
+    \href{https://docs.python.org/3/library/json.html}{\underline{\pythoninline{json}}}
+    (for reading/writing network weights from/to files)
 \end{itemize}
-
 We decided to use these libraries since, they are very convenient for their
+
 certain purpose and the role they played in the project did not seem to be the
-main learning objective. Whereas if we had used something like \pythoninline{numpy} some
+main learning objective. Whereas if we had used something like
+\href{https://numpy.org}{\underline{\pythoninline{numpy}}} some
 of the questions in the project would have become redundant, since
 \pythoninline{numpy} had already implemented it.
-
 
 % section (end)
 
@@ -298,8 +309,27 @@ codebase, as apposed to the aforementioned \pythoninline{numpy} implementation.
 % section (end)
 
 
+% chapter (end)
+\chapter{Appendix}  
+\label{ch:appendix}
 
+\section{Codebase}  
+\label{sec:codebase}
 
+\subsection{final-project.py}
+\label{sub:final_project_py}
+
+\pythonexternal{../final-project.py}
+
+% subsection (end)
+
+\subsection{LinAlg.py}
+\label{sub:linAlg_py}
+
+\pythonexternal{../linalg.py}
+
+% subsection (end)
+% section (end)
 % chapter (end)
 
 \end{document}
