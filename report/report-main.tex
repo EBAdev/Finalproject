@@ -215,11 +215,13 @@ From this we also had to plot the first few images from the set of images we did
 
 \subsection{Part 3}
 In Part three we have to train the network. We then found it interesting to asses how it performs throughout the iterations. Thus we have constructed this plot of the development of accuracy and cost over evaluated after ever update so we can get a closer look at the rate of learning for the network.
-%%%
 
-%insert graph accuracy, plot
-
-%%%
+\begin{figure}
+  \centering
+  \includegraphics[scale = 0.9]{cost_accuracy_with_line.png}
+  \caption{The accuracy and cost through each batch we have trained the data on}
+  \label{fig:cost-accuracy}
+\end{figure}
 
 As we see the accuracy tops at around $86\%$ and a cost of around 0.04. We have deemed this to be ok results, but we could probably have better results if we decreased the step size leading to a more precise estimation of the minimum of the cost function. Thus we see that our accuracy is slightly lower than the trained network that we were given.
 

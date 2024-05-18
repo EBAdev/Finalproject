@@ -376,10 +376,11 @@ def learn(images: list[img], labels: list[int], epochs: int, batch_size: int, st
             label_batch = [lab for j, lab in enumerate(labels) if j in batch]
 
             NW = update(NW, image_batch, label_batch, step_size)
-            #ryk ud af loop 
-            evaluation = evaluate(NW, test_img, test_labs)
-            cost_list.append(evaluation[1])
-            accuracy_list.append(evaluation[2])
+
+
+        evaluation = evaluate(NW, test_img, test_labs)
+        cost_list.append(evaluation[1])
+        accuracy_list.append(evaluation[2])
         
         linear_save("trained.weights", list(NW))
 
@@ -393,10 +394,12 @@ def plot_ca(cost_list:list, accuracy_list: list) -> None:
     #plot the cost and accuracy
     fig, (ax1, ax2) = plt.subplots(nrows=2, ncols=1)
     ax1.plot(accuracy_list, color='blue', marker='', linestyle='-')
-    ax2.plot(cost_list, color='red', marker='', linestyle='-')
+    ax2.plot(cost_list, color='blue', marker='', linestyle='-')
     ax1.set_xlabel('Iteration')
     ax1.set_ylabel('Accuracy')
     ax1.set_title('Accuracy over Time')
+    ax1.axhline(y=accuracy_list[-1], color='r', linestyle='--', label = str(accuracy_list[-1]))
+    ax1.text(len(accuracy_list) // 2, accuracy_list[-1] - 0.1, str(accuracy_list[-1]), color='r', va='center', ha='right', backgroundcolor='white')
     ax1.set_xticklabels([])
     
     ax2.set_xlabel('Iteration')
@@ -410,28 +413,28 @@ def plot_ca(cost_list:list, accuracy_list: list) -> None:
     return None
 
 if __name__ == "__main__":
-    nw = linear_load("mnist_linear.weights")
-    imgs = read_images("train-images-idx3-ubyte.gz")
-    labs = read_labels("train-labels-idx1-ubyte.gz")
+    #nw = linear_load("mnist_linear.weights")
+    #imgs = read_images("train-images-idx3-ubyte.gz")
+    #labs = read_labels("train-labels-idx1-ubyte.gz")
 
     # test_img = read_images("t10k-images-idx3-ubyte.gz")
     # test_labs = read_labels("t10k-labels-idx1-ubyte.gz")
 
     # Code to learn a new network of random weights.
-    learned = learn(imgs, labs, 5, 100)
-    cost_list = learned[1]
-    accuracy_list = learned[2]
+    #learned = learn(imgs, labs, 5, 100)
+    #cost_list = learned[1]
+    #accuracy_list = learned[2]
     
-    #save lists
-    with open('cost_list.csv', 'w', newline='') as outfile:
-        csv_out = csv.writer(outfile)
-        csv_out.writerow(cost_list)
-    
-    with open('accuracy_list.csv', 'w', newline='') as outfile:
-        csv_out = csv.writer(outfile)
-        csv_out.writerow(accuracy_list)
-
-    plot_ca(cost_list, accuracy_list)
+    with open('accuracy_list.csv', 'r', newline='') as infile:
+        for row in csv.reader(infile):
+            acc = row
+    with open('cost_list.csv', 'r', newline='') as infile:
+        for row in csv.reader(infile):
+            cos = row
+    cos = [float(cosel) for cosel in cos]
+    acc = [float(accel) for accel in acc]
+    plot_ca(cos, acc)
+    #plot_ca(cost_list, accuracy_list)
     # Code to test trained weight
     # print(evaluate(linear_load("trained.weights"), test_img, test_labs))
 
