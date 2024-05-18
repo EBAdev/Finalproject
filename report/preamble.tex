@@ -509,12 +509,12 @@
 }
 % 1. General Python Keywords List
 \lstdefinelanguage{PythonPlus}[]{Python}{
-  morekeywords=[1]{,as,assert,nonlocal,with,yield,self,True,False,None,}, % Python builtin
+  morekeywords=[1]{,as,assert,nonlocal,with,yield,True,False,None,}, % Python builtin
   morekeywords=[2]{,__init__,__add__,__mul__,__div__,__sub__,__call__,__getitem__,__setitem__,__eq__,__ne__,__nonzero__,__rmul__,__radd__,__repr__,__str__,__get__,__truediv__,__pow__,__name__,__future__,__all__,predict,add,catagorical,learn,update,plot_images,read_labels,read_images,plot_images,linear_load,linear_save,image_to_vector,mean_square_error,argmax,evaluate,create_batches,col_space,row_space,isinstance,fact_mult,transpose,mat_mult,pow,flatten,reshape,}, % magic methods
   morekeywords=[3]{,object,type,isinstance,copy,deepcopy,zip,enumerate,reversed,list,set,len,dict,tuple,range,xrange,append,execfile,real,imag,reduce,str,repr,}, % common functions
-  morekeywords=[4]{,Exception,NameError,IndexError,SyntaxError,TypeError,ValueError,OverflowError,ZeroDivisionError,}, % errors
+  morekeywords=[4]{,Exception,NameError,IndexError,SyntaxError,TypeError,ValueError,OverflowError,ZeroDivisionError,self}, % errors
   morekeywords=[5]{,ode,fsolve,sqrt,exp,sin,cos,arctan,arctan2,arccos,pi,
-  array,norm,solve,dot,arange,isscalar,max,sum,shape,find,any,all,abs,plot,linspace,legend,quad,polyval,polyfit,hstack,concatenate,vstack,column_stack,empty,zeros,ones,rand,vander,grid,pcolor,eig,eigs,eigvals,svd,qr,tan,det,logspace,roll,min,mean,cumsum,cumprod,diff,vectorize,lstsq,cla,eye,xlabel,ylabel,squeeze,Matrix,LinAlg}, % numpy / math
+  array,norm,solve,dot,arange,isscalar,max,sum,shape,find,any,all,abs,plot,linspace,legend,quad,polyval,polyfit,hstack,concatenate,vstack,column_stack,empty,zeros,ones,rand,vander,grid,pcolor,eig,eigs,eigvals,svd,qr,tan,det,logspace,roll,min,mean,cumsum,cumprod,diff,vectorize,lstsq,cla,eye,xlabel,ylabel,squeeze,Matrix,LinAlg,Vector}, % numpy / math
 }
 % 2. New Language based on Python
 \lstdefinelanguage{PyBrIM}[]{PythonPlus}{
