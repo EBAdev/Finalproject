@@ -202,45 +202,26 @@ modules anyway, for certain purposes. The modules are limited to:
     \href{https://docs.python.org/3/library/json.html}{\underline{\pythoninline{json}}}
     (for reading/writing network weights from/to files)
 \end{itemize}
-We decided to use these libraries since, they are very convenient for their
-
-certain purpose and the role they played in the project did not seem to be the
-main learning objective. Whereas if we had used something like
-\href{https://numpy.org}{\underline{\pythoninline{numpy}}} some
-of the questions in the project would have become redundant, since
+We decided to use these libraries since, they are very convenient for their certain purpose and the role they played in the project did not seem to be the main learning objective of the project. Whereas if we had used something like
+\href{https://numpy.org}{\underline{\pythoninline{numpy}}} for some
+of the questions in the project, they would have become redundant, since
 \pythoninline{numpy} had already implemented it.
 
 % section (end)
 
 \section{Visualisation and Performance of our neural network}  
-\label{ch:visualisation}
+\label{sec:visualisation and performance}
 Throughout this project we have tested the network in different capacities, this
 section elaborates both on the visual testing we have done, and the performance
 we have measured.
 \subsection{Part 2}
-It started in part 2 where we had to create a function, \pythoninline{evaluate}, based on a given (already trained) network could evaluate the prediction and tell how often the network comprehended the image satisfactory and returned the right number. From this we have a accuracy of $92\%$. 
-
-From this we also had to plot the first few images from the set of images we did this both as just the image where the label the asssed wether or not we guessed right. This plot also holds a plot of the number 0 through 9 and how their linear classifier weights are distributed. which gives a bit of an understanding of how it works.
-
-%insert graph from plot_images
-\begin{figure}[H]
-    \centering
-    \includegraphics[scale = 0.5]{plot_image_eval.png}
-    \caption{The first few images of image classification from the trained network}
-    \label{fig:evaluation}
-\end{figure}
+It started in part 2 where we had to create a function, \pythoninline{evaluate}, based on a given (already trained) network could evaluate the prediction and tell how often the network comprehended the image satisfactory and returned the right number. From this we have a accuracy of $92\%$.\\
+From this we also had to plot the first few images from the set of images we did this both as just the image where the label the asssed wether or not we guessed right. This plot also holds a plot of the number 0 through 9 and how their linear classifier weights are distributed. Which gives a bit of an understanding of how it works. This is displayed in \ref{sec:Visualizations} in figure \ref{fig:evaluation}
 
 \subsection{Part 3}
-In Part three we have to train the network. We then found it interesting to asses how it performs throughout the iterations. Thus we have constructed this plot of the development of accuracy and cost over evaluated after ever update so we can get a closer look at the rate of learning for the network.
+In Part three the main objective is to develop a method of training the network. We then found it interesting to asses how it performs throughout the iterations. Thus we have constructed this plot of the development of accuracy and cost over evaluated after ever update so we can get a closer look at the rate of learning for the network which is displayed in \ref{sec:Visualizations} in figure \ref{fig:cost-accuracy}. In order to make the plot we have altered the \pythoninline{learn()} function to get more observations for the accuracy and cost. We did this by calling the \pythoninline{evaluate()} function after running the \pythoninline{update()} function on every batch. However we have moved it back since it massively slowed down the code and it does not do anything for ten output besides given more observations in \pythoninline{accuracy_list} and \pythoninline{cost_list}
 
-\begin{figure}
-  \centering
-  \includegraphics[scale = 0.9]{cost_accuracy_with_line.png}
-  \caption{The accuracy and cost through each batch we have trained the data on}
-  \label{fig:cost-accuracy}
-\end{figure}
-
-As we see the accuracy tops at around $86\%$ and a cost of around 0.04. We have deemed this to be ok results, but we could probably have better results if we decreased the step size leading to a more precise estimation of the minimum of the cost function. Thus we see that our accuracy is slightly lower than the trained network that we were given.
+As we see the accuracy tops at around $86\%$ and a cost of around 0.04. We have deemed this to be decent results, but we could probably have better results if we decreased the step size leading to a more precise estimation of the minimum of the cost function and thus higher accuracy. Which could be one of the reasons that we see that our accuracy is slightly lower than the trained network that we were given.
 
 
 % section (end)
@@ -307,11 +288,34 @@ faster, then such an implementation would not add another dependency to the
 codebase, as apposed to the aforementioned \pythoninline{numpy} implementation.
 
 % section (end)
-
-
+\section{Conclusion}
+The development of the project have have been done using mostly base python and a few modules to ease some thing up. 
+We have written the code in a structured manner with documentation and so on. We managed to make the network guess 
+the numbers right, with a $86\%$ accuracy and a cost of $0.04$ which we would consider to be decent. However as we have 
+went over in the report, there is ways to improve the networks performance this includes but is not limited to decreasing 
+step size and optimizing the linear algebra module. To sum it all up, we have now developed and trained a neural network 
+to recognize handwritten numbers with a decent accuracy.
 % chapter (end)
+\newpage
 \chapter{Appendix}  
 \label{ch:appendix}
+
+\section{Visualizations}
+\label{sec:Visualizations}
+%insert graph from plot_images
+\begin{figure}[H]
+    \centering
+    \includegraphics[scale = 0.5]{plot_image_eval.png}
+    \caption{The first few images of image classification from the trained network}
+    \label{fig:evaluation}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[scale = 0.7]{cost_accuracy_with_line.png}
+  \caption{The accuracy and cost through each batch we have trained the data on.}
+  \label{fig:cost-accuracy}
+\end{figure}
 
 \section{Codebase}  
 \label{sec:codebase}
