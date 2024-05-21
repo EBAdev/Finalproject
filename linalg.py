@@ -30,6 +30,7 @@ This module provides Classes and methods for basic linear algebra
 
 from typing import Type, Union, List
 
+
 Mat = Type["Matrix"]
 matrix_input = Union[List[List[Union[int, float]]], List[Union[int, float]]]
 
@@ -38,10 +39,11 @@ class LinAlg:
     """
     Base class for linear algebra operations
     """
+
     def col_space(self):
         """
         Method to return the column space of a LinAlg class
-        
+
         ## Example use
         >>> m = LinAlg()
         >>> m.elements = [[1, 2], [3, 4]]
@@ -91,6 +93,7 @@ class Matrix(LinAlg):
     """
     Represents a matrix and provides various matrix operations.
     """
+
     def __init__(self, elements: matrix_input) -> None:
         """
         initiate a 2d-matrix class
@@ -150,7 +153,7 @@ class Matrix(LinAlg):
     def __add__(self, matrix: Mat) -> Mat:
         """
         Method for addition of matrices of same dimensions
-        
+
         ## Example use
         >>> A = Matrix([[1, 2], [3, 4]])
         >>> B = Matrix([[5, 6], [7, 8]])
@@ -184,7 +187,7 @@ class Matrix(LinAlg):
     def sub(self, matrix: Mat) -> Mat:
         """
         Define subtraction between matrices as the elementwise inverse addition
-        
+
         ## Example use
         >>> A = Matrix([[5, 6], [7, 8]])
         >>> B = Matrix([[1, 2], [3, 4]])
@@ -199,7 +202,7 @@ class Matrix(LinAlg):
     def __sub__(self, matrix: Mat) -> Mat:
         """
         Subtract Matrices of same dimensions
-        
+
         ## Example use
         >>> A = Matrix([[5, 6], [7, 8]])
         >>> B = Matrix([[1, 2], [3, 4]])
@@ -214,7 +217,7 @@ class Matrix(LinAlg):
     def fact_mult(self, factor: int | float) -> Mat:
         """
         Factor multiplication for a matrix and a number
-        
+
         ## Example use
         >>> A = Matrix([[1, 2], [3, 4]])
         >>> B = A.fact_mult(2)
@@ -230,7 +233,7 @@ class Matrix(LinAlg):
     def transpose(self) -> Mat:
         """
         Transpose a matrix
-        
+
         ## Example use
         >>> A = Matrix([[1, 2], [3, 4]])
         >>> B = A.transpose()
@@ -244,7 +247,7 @@ class Matrix(LinAlg):
     def mat_mult(self, matrix: Mat) -> Mat:
         """
         Define matrix multiplication for matrices of compatible dimensions
-        
+
         ## Example use
         >>> A = Matrix([[1, 2], [3, 4]])
         >>> B = Matrix([[2, 0], [1, 2]])
@@ -263,7 +266,7 @@ class Matrix(LinAlg):
     def __mul__(self, other: Mat | int | float) -> Mat | int | float:
         """
         Define multiplication operator to use matrix-product for matricies and scalar multiplication for factors.
-        
+
         ## Example use
         #matrix multiplication
         >>> A = Matrix([[1, 2], [3, 4]])
@@ -307,6 +310,7 @@ class Matrix(LinAlg):
         """
         Define powers of vectors as the elementwise power.
         
+
         ## Example use
         #Elementwise
         >>> A = Matrix([[1, 2], [3, 4]])
@@ -315,7 +319,7 @@ class Matrix(LinAlg):
         |  1  4 |
         |  9 16 |
         <BLANKLINE>
-        
+
         #Matrix power
         >>> C = A.pow(2, elementwise = False)
         >>> print(C)
@@ -364,7 +368,7 @@ class Matrix(LinAlg):
     def reshape(self, cols: int) -> Mat:
         """
         Reshapes the matrix to a square matrix of size cols:
-        
+
         >>> A = Matrix([1, 2, 3, 4])
         >>> B = A.reshape(2)
         >>> print(B)
@@ -378,13 +382,8 @@ class Matrix(LinAlg):
         return Matrix([values[i:i+cols] for i in range(0, len(values), cols)])
 
 
+
 if __name__ == "__main__":
-    #m1 = Matrix([[1, 2, 3], [1, 2, 3], [1, 2, 3]])
-    #m3 = Matrix([[1, 2, 3], [1, 2, 3], [1, 2, 3]])
-    #m2 = Matrix([[1], [3], [4], [5]])
-    A = Matrix([[5, 6], [7, 8]])
-    B = Matrix([[1, 2], [3, 4]])
-    C = A.sub(B)
-    print(C)
-    #print(m1*m2, m1.transpose(), m2.transpose())
-    #print(m1+m3, m1*m3, m2.flatten(), m3.pow(2, elementwise=False), m3.transpose(), sep="\n")
+    import doctest
+    doctest.testmod(verbose=True)
+

@@ -1,14 +1,18 @@
+
 import gzip
 import random
+from matplotlib import gridspec
 import matplotlib.pyplot as plt
 import json
-import csv
+
 from linalg import Matrix
 
 img = list[list[int]]  # 2d object of integer values
 NetW = list[list[int | float], list[int, float]]
 
-#part 1
+# part 1
+
+
 def read_labels(filename: str) -> list[int]:
     """
     Read the labels from a gzip file following the byteroder described in
@@ -50,7 +54,7 @@ def read_images(filename: str) -> list[img]:
         return [[[byte for byte in f.read(num_row)] for _col in range(num_col)] for _img in range(num_img)]
 
 
-def plot_images(images: list[img], labels: list[int],  Weight_matrix: Matrix, prediction: list[int] = []) -> None:
+def plot_images(images: list, labels: list[int], Weight_matrix, prediction: list[int] = None) -> None:
     """
     Plot the first images in a list of images, along with the corresponding labels.
 
@@ -65,16 +69,20 @@ def plot_images(images: list[img], labels: list[int],  Weight_matrix: Matrix, pr
     * Opens a matplotlib plot of the first rows x cols images.
     """
 
-    fig, axes = plt.subplots(nrows= 4, ncols=5, figsize=(10, 8), gridspec_kw={'wspace': 0.5})
-    axes1 = axes[0:2]
-    axes2 = axes[2:]
+    fig = plt.figure(figsize=(10, 8))
+    gs = gridspec.GridSpec(nrows=4, ncols=6, figure=fig, wspace=0.5)
+
+    axes1 = [fig.add_subplot(gs[i // 5, i % 5]) for i in range(10)]
+    axes2 = [fig.add_subplot(gs[i // 5 + 2, i % 5]) for i in range(10)]
+
     A_T = Weight_matrix.transpose()
     weight_images = [Matrix(row).reshape(28) for row in A_T]
+    min_weight = min(min(row for row in A_T))
+    max_weight = max(max(row for row in A_T))
 
-    for idx, ax in enumerate(axes1.flat):
+    for idx, ax in enumerate(axes1):
         ax.tick_params(left=False, right=False, labelleft=False,
                        labelbottom=False, bottom=False)
-        # if there is a prediction for image
         color = "gray_r"
         try:
             prediction[idx]
@@ -89,16 +97,22 @@ def plot_images(images: list[img], labels: list[int],  Weight_matrix: Matrix, pr
         ax.imshow(images[idx], cmap=color, vmin=0, vmax=255)
         ax.set_title(label, fontsize=10)
 
-    for idx, ax in enumerate(axes2.flat):
+    im = None
+    for idx, ax in enumerate(axes2):
         ax.tick_params(left=False, right=False, labelleft=False,
                        labelbottom=False, bottom=False)
-        im = ax.imshow(weight_images[idx].elements, cmap="hot", vmin=-1, vmax=1)
+        im = ax.imshow(weight_images[idx].elements,
+                       cmap="hot", vmin=min_weight, vmax=max_weight)
         ax.set_title(idx, fontsize=10)
-    fig.colorbar(im, ax=axes2[:,-1])
-    plt.show()
-    return None
 
-#part 2
+    cbar_ax = fig.add_subplot(gs[2:, -1])
+    fig.colorbar(im, cax=cbar_ax)
+
+    plt.show()
+
+# part 2
+
+
 def linear_load(filename: str) -> NetW:
     """
     Load a json file of filename in as a NetW
@@ -107,7 +121,7 @@ def linear_load(filename: str) -> NetW:
 
     Returns:
     * NetW: A network consisting of a list of A and b.
-    
+
     ## Example use
     >>> import tempfile
     >>> with tempfile.NamedTemporaryFile('w', delete=False) as tmp:
@@ -124,14 +138,14 @@ def linear_load(filename: str) -> NetW:
 def linear_save(filename: str, network: NetW) -> None:
     """
     inspiration from: https://www.geeksforgeeks.org/create-a-file-if-not-exists-in-python/
-    Save a .weights file 
+    Save a .weights file
 
     Args:
     1. filename (str): The filename of the .weights file.
 
     Returns:
     * None: It only saves the .weights file.
-    
+
     ## Example use
 
     >>> import tempfile
@@ -142,13 +156,14 @@ def linear_save(filename: str, network: NetW) -> None:
     >>> linear_load(filename)
     [[1, 2], [3, 4]]
     """
-    try:  
+    try:
         with open(filename, 'x') as f:
             f.write(str(network))
     except FileExistsError:
         with open(filename, "w") as f:
             f.write(str(network))
     return None
+
 
 def image_to_vector(image: img) -> Matrix:
     """
@@ -159,7 +174,7 @@ def image_to_vector(image: img) -> Matrix:
 
     Returns:
     * Matrix: a row vector with entries in the range [0,1]
-    
+
     ## Example use
     >>> image = [[0, 255], [127, 255]]
     >>> v1 = image_to_vector(image)
@@ -173,14 +188,14 @@ def image_to_vector(image: img) -> Matrix:
 def mean_square_error(v1: Matrix, v2: Matrix) -> float:
     """
     Define the mean squared error between two vectors
-    
+
     Args:
     1. v1 (Matrix): The first vector
     2. v2 (Matrix): The second vector
 
     Returns:
     * float: The mean squared error
-    
+
     ## Example use
     >>> v1 = Matrix([1, 2, 3])
     >>> v2 = Matrix([1, 2, 4])
@@ -194,13 +209,13 @@ def mean_square_error(v1: Matrix, v2: Matrix) -> float:
 def argmax(v1: Matrix) -> int:
     """
     Define argmax for a vector.
-    
+
     Args:
     1. v1 (Matrix): is a row vector
-    
+
     Returns:
     * int: the index of the largest element of a vector
-    
+
     ## Example use
     >>> v1 = Matrix([1, 2, 3])
     >>> argmax(v1)
@@ -220,7 +235,7 @@ def catagorical(label: int, classes: int = 10) -> Matrix:
 
     Returns:
     * Matrix: a row vector (Matrix) of the length classes
-    
+
     # Example use
     >>> print(catagorical(2, 10))
     | 0 0 1 0 0 0 0 0 0 0 |
@@ -240,7 +255,7 @@ def predict(network: NetW, image: img) -> Matrix:
 
     Returns:
     * x * A + b
-    
+
     ## Example use
     >>> network = [[[0.1, 0.2], [0.3, 0.4], [0.5, 0.6], [0.7, 0.8]], [0.1, 0.2]]
     >>> image = [[0, 255], [127, 255]]
@@ -263,7 +278,7 @@ def evaluate(network: NetW, images: list[img], labels: list[int]) -> tuple:
     1. Network (NetW): A network that contain both A and b
     2. images (list[img]): A list of the images.
     3. labels (list[int]): A list of the image labels.
-    
+
     Returns:
     * Predictions (list): is a list of the predictions for the given image
     * cost (float): the value of cost, which is the average MSE
@@ -284,7 +299,7 @@ def evaluate(network: NetW, images: list[img], labels: list[int]) -> tuple:
 # part 3
 def create_batches(values: list[int | float], batch_size: int) -> list[list[int | float]]:
     """
-    Creates permuted batches e.g. 
+    Creates permuted batches e.g.
 
     Args:
     Values: this is the list that should be made into batches
@@ -298,7 +313,7 @@ def create_batches(values: list[int | float], batch_size: int) -> list[list[int 
     return [values[i:i + batch_size] for i in range(0, len(values), batch_size)]
 
 
-def update(network: NetW, images: list[img], labels: list[int], step_size: float=0.1) -> tuple:
+def update(network: NetW, images: list[img], labels: list[int], step_size: float = 0.1) -> tuple:
     """
     Updates the network using gradient descent
 
@@ -327,24 +342,23 @@ def update(network: NetW, images: list[img], labels: list[int], step_size: float
     return A.elements, b.elements
 
 
-def learn(images: list[img], labels: list[int], epochs: int, batch_size: int, step_size: float=0.1, test_image_file: str="t10k-images-idx3-ubyte.gz", test_labels_file: str="t10k-labels-idx1-ubyte.gz") -> tuple:
+def learn(images: list[img], labels: list[int], epochs: int, batch_size: int, step_size: float = 0.1, test_image_file: str = "t10k-images-idx3-ubyte.gz", test_labels_file: str = "t10k-labels-idx1-ubyte.gz") -> tuple:
     """
     This function does some training on the data, such that we better can predict the numbers
 
     Args:
-    1. images (list[img]): The list of images 
+    1. images (list[img]): The list of images
     2. labels (list[int]): The list of labels
     3. epochs (int): The number of iterations
     4. batch_size (int): The size of the batches
-    5. step_size (float): The step size for the gradient descent 
+    5. step_size (float): The step size for the gradient descent
     6. test_image_file (str): The filename for the test images
     7. test_labels_file (str): The filename for the labels that fit with the images
 
     Returns:
     * Predictions (list): is a list of the predictions for the given image
-    * cost (float): the value of cost, which is the average MSE
-    * Accuracy (float): is the fraction of times we predicted correctly
-    * it also creates a plot of the development of the cost and accurace through the iterations
+    * cost_list (list): the values of cost, which is the average MSE from each epoch
+    * accuracy_list (float): the fraction of times we predicted correctly from each epoch
     """
     test_img = read_images(test_image_file)
     test_labs = read_labels(test_labels_file)
@@ -356,10 +370,10 @@ def learn(images: list[img], labels: list[int], epochs: int, batch_size: int, st
     print("Random weights generated. Testing")
 
     linear_save("trained.weights", [A_random, b_random])
-    
+
     evaluation = evaluate([A_random, b_random], test_img, test_labs)
-    cost_list = [evaluation[1]] #track cost
-    accuracy_list = [evaluation[2]] #track accuracy
+    cost_list = [evaluation[1]]  # track cost
+    accuracy_list = [evaluation[2]]  # track accuracy
     print(f"Test done, cost {evaluation[1]}, accuracy {evaluation[2]}")
 
     for epoch in range(epochs):
@@ -377,54 +391,61 @@ def learn(images: list[img], labels: list[int], epochs: int, batch_size: int, st
 
             NW = update(NW, image_batch, label_batch, step_size)
 
-
         evaluation = evaluate(NW, test_img, test_labs)
         cost_list.append(evaluation[1])
         accuracy_list.append(evaluation[2])
-        
+
         linear_save("trained.weights", list(NW))
 
-
         print(f"Training done, cost: {evaluation[1]}, accuracy {evaluation[2]}")
-    
 
     return evaluation, cost_list, accuracy_list
 
-def plot_ca(cost_list:list, accuracy_list: list) -> None:
-    #plot the cost and accuracy
+
+def plot_ca(cost_list: list, accuracy_list: list) -> None:
+    # plot the cost and accuracy
     fig, (ax1, ax2) = plt.subplots(nrows=2, ncols=1)
     ax1.plot(accuracy_list, color='blue', marker='', linestyle='-')
     ax2.plot(cost_list, color='blue', marker='', linestyle='-')
     ax1.set_xlabel('Iteration')
     ax1.set_ylabel('Accuracy')
     ax1.set_title('Accuracy over Time')
-    ax1.axhline(y=accuracy_list[-1], color='r', linestyle='--', label = str(accuracy_list[-1]))
-    ax1.text(len(accuracy_list) // 2, accuracy_list[-1] - 0.1, str(accuracy_list[-1]), color='r', va='center', ha='right', backgroundcolor='white')
+    ax1.axhline(y=accuracy_list[-1], color='r',
+                linestyle='--', label=str(accuracy_list[-1]))
+    ax1.text(len(accuracy_list) // 2, accuracy_list[-1] - 0.1, str(
+        accuracy_list[-1]), color='r', va='center', ha='right', backgroundcolor='white')
     ax1.set_xticklabels([])
-    
+
     ax2.set_xlabel('Iteration')
     ax2.set_ylabel('Cost')
     ax2.set_title('Cost over Time')
     ax2.set_xticklabels([])
-    
+
     plt.tight_layout()
     plt.show()
 
     return None
 
+
 if __name__ == "__main__":
-    #nw = linear_load("mnist_linear.weights")
-    #imgs = read_images("train-images-idx3-ubyte.gz")
-    #labs = read_labels("train-labels-idx1-ubyte.gz")
+    # Code to run doctests
+    import doctest
+    doctest.testmod(verbose=True)
 
-    # test_img = read_images("t10k-images-idx3-ubyte.gz")
-    # test_labs = read_labels("t10k-labels-idx1-ubyte.gz")
+    """
+    ###  Code to learn a new network of random weights, and save evaluation
+    nw = linear_load("mnist_linear.weights")
+    imgs = read_images("train-images-idx3-ubyte.gz")
+    labs = read_labels("train-labels-idx1-ubyte.gz")
 
-    # Code to learn a new network of random weights.
-    #learned = learn(imgs, labs, 5, 100)
-    #cost_list = learned[1]
-    #accuracy_list = learned[2]
-    
+    learned = learn(imgs, labs, 5, 100)
+    cost_list = learned[1]
+    accuracy_list = learned[2]
+    """
+
+    """
+    ### Code to plot accuracy graph
+    import csv
     with open('accuracy_list.csv', 'r', newline='') as infile:
         for row in csv.reader(infile):
             acc = row
@@ -434,18 +455,33 @@ if __name__ == "__main__":
     cos = [float(cosel) for cosel in cos]
     acc = [float(accel) for accel in acc]
     plot_ca(cos, acc)
-    #plot_ca(cost_list, accuracy_list)
-    # Code to test trained weight
-    # print(evaluate(linear_load("trained.weights"), test_img, test_labs))
+    """
 
-    # Code to test random weights
-    # print(evaluate(linear_load("random.weights"), read_images(
-    #    "train-images-idx3-ubyte.gz"), read_labels("train-labels-idx1-ubyte.gz")))
+    """
+    ### Code to test trained weight
+    test_imgs = read_images("t10k-images-idx3-ubyte.gz")
+    test_labs = read_labels("train-labels-idx1-ubyte.gz")
+    eval = evaluate(linear_load("trained.weights"), test_imgs, test_labs)
+    guess = eval[0]
+    print(f"During evaluation the Avg. cost was {eval[1]}, with accuracy {eval[2]}.")
+    """
 
-    #labels = read_labels("t10k-labels-idx1-ubyte.gz")
-    #images = read_images("t10k-images-idx3-ubyte.gz")
-    #filename = "mnist_linear.weights"
-    #nw = linear_load(filename)
-    #predicions = evaluate(nw, images, labels)
-    #print(f"cost: {predicions[1]} and accuracy: {predicions[2]}")
-    #plot_images(images, labels, Matrix(nw[0]), predicions[0])
+    """
+    ### Code to test random weights
+    test_imgs = read_images("t10k-images-idx3-ubyte.gz")
+    test_labs = read_labels("train-labels-idx1-ubyte.gz")
+    eval = evaluate(linear_load("random.weights"), test_imgs, test_labs)
+    guess = eval[0]
+    print(f"During evaluation the Avg. cost was {eval[1]}, with accuracy {eval[2]}.")
+    """
+
+    """
+    # Code to generate plot_images()
+    labs = read_labels("t10k-labels-idx1-ubyte.gz")
+    imgs = read_images("t10k-images-idx3-ubyte.gz")
+    filename = "trained.weights"
+    nw = linear_load(filename)
+    predicions = evaluate(nw, imgs, labs)
+    print(f"cost: {predicions[1]} and accuracy: {predicions[2]}")
+    plot_images(imgs, labs, Matrix(nw[0]), predicions[0])
+    """
